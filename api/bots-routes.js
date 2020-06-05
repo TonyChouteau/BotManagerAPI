@@ -30,6 +30,8 @@ var router = express.Router();
 let botManager = new BotManager();
 botManager.load();
 
+var NAMES = ["Ally", "Steve", "Max", "Lucie", "Astrid", "Tommy"];
+
 //====================================================
 // Define Routes
 //====================================================
@@ -55,6 +57,9 @@ router.route("/bots")
 		
 			let bot = JSON.parse(f);
 		
+			let name = (parseInt(id) <= NAMES.length)?NAMES[parseInt(id)-1]:"ACEHILRTUVW123456789".split('').sort(function(){return 0.5-Math.random()}).join('');
+			bot.name = name;
+
 			listOfBots[id] = bot;
 		});
 
@@ -197,6 +202,9 @@ router.route("/bot/:id")
 			});
 		}
 		let bot = JSON.parse(data);
+		
+		let name = (parseInt(req.params.id) <= NAMES.length)?NAMES[parseInt(req.params.id)-1]:"ACEHILRTUVW123456789".split('').sort(function(){return 0.5-Math.random()}).join('');
+		bot.name = name;
 	
 		return res.status(200).json(bot);						// 200 - OK
 	});
@@ -309,12 +317,14 @@ router.route("/bot/:id")
 	});
 })
 .patch(function(req, res){ 										// ====PATCH====
+	console.log("patch");
 	fs.readFile(PATH+"/"+req.params.id+'.json', (err, data) => {
 		if (err){
 			return res.status(404).json({						// 404 - Not Found
 				"error": 'Not Found'
 			});
 		}
+
 
 		if (req.body.state != undefined 
 			|| req.body.addmouth != undefined && req.body.addmouth != "" 
@@ -470,7 +480,15 @@ router.route("/bot/:id")
 			});
 		}
 
-		botManager.bots[req.params.id].brain.response("user", req.body.message).then(reply => {
+		let user;
+		if (req.body.name == undefined || req.body.name == ""){
+			user = Math.random();
+		} else {
+			user = req.body.name;
+		}
+		console.log(user);
+
+		botManager.bots[req.params.id].brain.response(user, req.body.message).then(reply => {
 			return res.status(200).json({						// 200 - OK
 				"name" : botManager.bots[req.params.id].name,
 				"message" : reply.split("$name").join(botManager.bots[req.params.id].name),
@@ -478,6 +496,28 @@ router.route("/bot/:id")
 		})
 	});
 })
+
+router.route("/bot/:id/data")
+.get((req, res) => {
+
+	fs.readFile(PATH+"/"+req.params.id+'.json', (err, data) => {
+		if (err){
+			return res.status(404).json({						// 404 - Not Found
+				"error": 'Not Found' 
+			});
+		}
+
+		if (botManager.bots[parseInt(req.params.id)] == undefined){
+			return res.status(409).json({						// 409 - Conflict
+				"error": "This bot is offline"
+			});
+		}
+
+		botManager.bots[req.params.id].brain.getSavedData().then(data => {
+			res.status(200).json(data);							// 200 - OK
+		});
+	});
+});
 
 //====================================================
 // Export

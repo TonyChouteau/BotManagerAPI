@@ -23,6 +23,7 @@
 ! var location = localhost
 ! var phone    = 31415926535
 ! var email    = hello@$name.fr
+! var color    = unknown
 
 // Substitutions
 ! sub +         = plus
@@ -30,6 +31,7 @@
 ! sub /         = divided
 ! sub *         = times
 ! sub i'm       = i am
+! sub im        = i am
 ! sub i'd       = i would
 ! sub i've      = i have
 ! sub i'll      = i will
@@ -525,6 +527,15 @@
 
 + test javascript
 - Testing javascript... <call>testing</call>.
+
++ how old am i
+- you are <get age> years old.
+
++ my favorite color is *
+- <set color=<star>>i will remember that your favorite color is <get color>
+
++ what is my favorite color
+- it is <get color>
 
 ! global topics = hello world
 
