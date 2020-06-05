@@ -21,11 +21,11 @@ npm start
 
 ## **Use the API**
 
-[Documentation API](./resources/Wiki/DOC.MD)
+[Documentation API](./resources/wiki/DOC.MD)
 
 ## **Discord mouth**
 
-[Documentation API](./resources/Wiki/DISCORD.MD)
+[Documentation API](./resources/wiki/DISCORD.MD)
 
 ## **Web mouth**
 
